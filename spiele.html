@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Lernspiele und Test-Training zum Hörspiel Eule findet den Beat.">
+<title>Eules Spielewald</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Andika:wght@400;700&display=swap">
+<style>
+/* Layout: Kopf mit Beat-Pass (5 Stempel), Spielauswahl als Kacheln, darunter jeweils eine große Spielfläche */
+:root{
+  --bg:#eef3fb; --surface:#ffffff; --surface-2:#e2eaf7; --fg:#14213d; --muted:#4b5a78;
+  --line:#c7d3e8; --owl:#f5b800; --owl-ink:#14213d; --night:#1d3a8a;
+  --good:#1f8a4c; --good-bg:#dff3e7; --bad:#c2410c; --bad-bg:#fde7da;
+  --f-display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Andika","Verdana",system-ui,sans-serif;
+  --g-pop:#d6338a; --g-jazz:#8a5a12; --g-rock:#b42318; --g-oper:#6d3fc4;
+  --g-punk:#2f7d14; --g-reggae:#0f7d6b; --g-hiphop:#c2410c; --g-elektro:#1f5fd1;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1430; --surface:#152150; --surface-2:#1c2b63; --fg:#eef2ff; --muted:#aab6d8;
+  --line:#2c3d7a; --owl:#ffc928; --owl-ink:#0c1430; --night:#9db4ff;
+  --good:#5fd394; --good-bg:#123d2a; --bad:#ff9a66; --bad-bg:#47200f;
+  --g-pop:#ff6cb6; --g-jazz:#e0a84a; --g-rock:#ff6b5e; --g-oper:#b996ff;
+  --g-punk:#7fd65a; --g-reggae:#3fd2b8; --g-hiphop:#ff9a4d; --g-elektro:#6fa4ff;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1430; --surface:#152150; --surface-2:#1c2b63; --fg:#eef2ff; --muted:#aab6d8;
+  --line:#2c3d7a; --owl:#ffc928; --owl-ink:#0c1430; --night:#9db4ff;
+  --good:#5fd394; --good-bg:#123d2a; --bad:#ff9a66; --bad-bg:#47200f;
+  --g-pop:#ff6cb6; --g-jazz:#e0a84a; --g-rock:#ff6b5e; --g-oper:#b996ff;
+  --g-punk:#7fd65a; --g-reggae:#3fd2b8; --g-hiphop:#ff9a4d; --g-elektro:#6fa4ff;
+  color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:18px;line-height:1.5}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:16px;padding-block:12px 48px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.1;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--owl);outline-offset:2px}
+a{color:var(--night)}
+
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-block:8px 16px}
+.brand{display:flex;align-items:center;gap:12px}
+.owl{width:56px;height:56px;flex:none}
+.brand h1{font-size:clamp(1.6rem,4vw,2.3rem);color:var(--night)}
+.brand p{margin:0;color:var(--muted);font-size:.95rem}
+.pass{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:8px 14px;display:flex;flex-direction:column;gap:4px}
+.pass small{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.stamps{display:flex;gap:6px}
+.stamp{width:30px;height:30px;border-radius:50%;border:2px dashed var(--line);display:grid;place-items:center;font-family:var(--f-display);font-size:.8rem;color:var(--muted)}
+.stamp.on{border:0;background:var(--owl);color:var(--owl-ink)}
+
+.menu{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.mhead{font-size:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-family:var(--f-body);font-weight:700}
+.mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:6px}
+@media (max-width:820px){.mgrid{grid-template-columns:repeat(2,1fr)}}
+.mbtn.test{border-color:var(--owl)}
+.mbtn{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px;text-align:left;display:flex;flex-direction:column;gap:2px;min-width:0}
+.mbtn b{font-family:var(--f-display);font-size:1.2rem;line-height:1.1}
+.mbtn span{font-size:.8rem;color:var(--muted)}
+.mbtn[aria-current="true"]{background:var(--night);border-color:var(--night);color:var(--bg)}
+.mbtn[aria-current="true"] span{color:var(--bg);opacity:.85}
+
+.intro{color:var(--muted);max-width:65ch;margin:0 0 16px}
+.stage{background:var(--surface);border:2px solid var(--line);border-radius:22px;padding:clamp(16px,3vw,28px);display:flex;flex-direction:column;gap:18px}
+.progress{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-size:.9rem;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.bar{flex:1;min-width:120px;height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--owl);transition:width .3s}
+.card{background:var(--surface-2);border-radius:18px;padding:20px;text-align:center;font-size:clamp(1.2rem,3vw,1.6rem);font-family:var(--f-display);text-wrap:balance}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn{background:var(--owl);color:var(--owl-ink);border:0;border-radius:14px;padding:12px 22px;font-family:var(--f-display);font-size:1.2rem}
+.btn.ghost{background:transparent;border:2px solid var(--line);color:var(--fg)}
+.btn:disabled{opacity:.45;cursor:default}
+.feedback{border-radius:14px;padding:12px 16px;font-size:1rem}
+.feedback.ok{background:var(--good-bg);color:var(--good)}
+.feedback.no{background:var(--bad-bg);color:var(--bad)}
+.feedback b{font-family:var(--f-display);font-size:1.2rem}
+.done{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.stars{display:flex;gap:6px;justify-content:center}
+.star{width:44px;height:44px;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);background:var(--surface-2)}
+.star.on{background:var(--owl)}
+
+/* Tier-Knöpfe */
+.animals{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:620px){.animals{grid-template-columns:repeat(2,1fr)}}
+.abtn{border:3px solid var(--line);background:var(--surface);border-radius:16px;padding:12px 6px;font-family:var(--f-display);font-size:1.2rem;min-height:60px;line-height:1.05;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.abtn small{font-family:var(--f-body);font-size:.72rem;color:var(--muted)}
+.abtn:hover:not(:disabled){border-color:var(--night)}
+.abtn:disabled{cursor:default;opacity:.45}
+.abtn.right{opacity:1;background:var(--good);border-color:var(--good);color:var(--surface)}
+.abtn.wrong{opacity:1;background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.abtn.right small,.abtn.wrong small{color:var(--surface)}
+
+/* Reise */
+.path{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+@media (max-width:760px){.path{grid-template-columns:repeat(4,1fr)}}
+.slot{border:2px dashed var(--line);border-radius:14px;min-height:72px;padding:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-family:var(--f-display);font-size:1.05rem;line-height:1.1;min-width:0}
+.slot i{font-style:normal;font-family:var(--f-body);font-size:.72rem;color:var(--muted)}
+.slot.filled{border-style:solid;border-color:var(--night);background:var(--surface-2)}
+.slot.ok{border-color:var(--good);background:var(--good-bg);color:var(--good)}
+.slot.bad{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+
+/* Memory */
+.memory{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mcard{aspect-ratio:4/3;max-width:100%;border-radius:14px;border:0;background:var(--night);color:var(--bg);font-family:var(--f-display);font-size:clamp(.95rem,2.6vw,1.3rem);display:grid;place-items:center;padding:6px;line-height:1.1;position:relative;overflow:hidden}
+.mcard .back{color:var(--owl);font-size:1.8rem}
+.mcard.open{background:var(--surface-2);color:var(--fg);border:3px solid var(--line)}
+.mcard.match{background:var(--gc);color:var(--surface);border:0}
+.mcard small{display:block;font-family:var(--f-body);font-size:.7rem;opacity:.85}
+
+/* Millionär */
+.ladder{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.rung{font-size:.78rem;padding:3px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);font-variant-numeric:tabular-nums}
+.rung.now{background:var(--owl);color:var(--owl-ink);font-weight:700}
+.rung.won{background:var(--good-bg);color:var(--good)}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:560px){.answers{grid-template-columns:1fr}}
+.ans{border:3px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;text-align:left;font-size:1.05rem;display:flex;gap:10px;align-items:center;min-width:0}
+.ans b{font-family:var(--f-display);color:var(--night)}
+.ans:hover:not(:disabled){border-color:var(--night)}
+.ans:disabled{cursor:default}
+.ans.gone{visibility:hidden}
+.ans.right{background:var(--good);border-color:var(--good);color:var(--surface)}
+.ans.wrong{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.ans.right b,.ans.wrong b{color:var(--surface)}
+.jokers{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.hint{background:var(--surface-2);border-radius:14px;padding:10px 14px;font-size:.95rem}
+
+/* Rätsel */
+.clues{display:flex;flex-direction:column;gap:8px}
+.clue{background:var(--surface-2);border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:baseline}
+.clue b{font-family:var(--f-display);color:var(--night);white-space:nowrap}
+
+/* Test-Training */
+.pic{width:min(220px,60vw);max-width:100%;aspect-ratio:1;margin:0 auto;background:var(--surface-2);border-radius:22px;display:grid;place-items:center}
+.pic svg{width:78%;height:78%}
+.gbtns{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:620px){.gbtns{grid-template-columns:repeat(2,1fr)}}
+.statement{background:var(--surface-2);border-radius:18px;padding:22px;text-align:center;font-size:clamp(1.2rem,3vw,1.6rem);font-family:var(--f-display);text-wrap:balance}
+.rfbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rf{border:3px solid var(--line);background:var(--surface);border-radius:16px;padding:14px;font-family:var(--f-display);font-size:1.4rem;min-height:64px}
+.rf:hover:not(:disabled){border-color:var(--night)}
+.rf.right{background:var(--good);border-color:var(--good);color:var(--surface)}
+.rf.wrong{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.rf:disabled{cursor:default}
+.bank{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;border:2px dashed var(--line);border-radius:14px;padding:10px}
+.bank span{background:var(--surface-2);border-radius:10px;padding:4px 12px;font-family:var(--f-display);font-size:1.15rem}
+.write{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center}
+.write label{font-family:var(--f-display);font-size:1.3rem}
+.write input{font:inherit;font-size:1.3rem;padding:10px 14px;border-radius:12px;border:3px solid var(--line);background:var(--surface);color:var(--fg);width:min(260px,100%)}
+.write input:focus{outline:none;border-color:var(--owl)}
+.reasons{display:flex;flex-wrap:wrap;gap:8px}
+.reason{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:1rem;text-align:left}
+.reason[aria-pressed="true"]{background:var(--owl);border-color:var(--owl);color:var(--owl-ink)}
+.sentence{background:var(--surface-2);border-radius:18px;padding:18px 20px;font-size:clamp(1.15rem,2.8vw,1.45rem);line-height:1.5}
+.sentence b{color:var(--night)}
+
+/* Player */
+.frame{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden}
+.frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.cover{position:absolute;inset:0;background:var(--night);color:var(--bg);display:grid;place-items:center;text-align:center;padding:12px;font-family:var(--f-display);font-size:1.2rem;pointer-events:none}
+.teacher{margin-top:28px;background:var(--surface);border:2px dashed var(--line);border-radius:16px;padding:12px 16px;font-size:.95rem}
+.teacher summary{cursor:pointer;font-family:var(--f-display);font-size:1.15rem}
+.pop{animation:pop .45s ease}
+@keyframes pop{0%{transform:scale(.92)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <svg class="owl" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M14 12 L22 22 L42 22 L50 12 L50 44 Q50 58 32 58 Q14 58 14 44 Z" fill="var(--night)"/>
+        <ellipse cx="32" cy="44" rx="11" ry="10" fill="var(--owl)"/>
+        <circle cx="24" cy="31" r="8" fill="var(--owl)"/><circle cx="40" cy="31" r="8" fill="var(--owl)"/>
+        <circle cx="24" cy="31" r="3.5" fill="var(--owl-ink)"/><circle cx="40" cy="31" r="3.5" fill="var(--owl-ink)"/>
+        <path d="M29 37 L35 37 L32 41 Z" fill="var(--bad)"/>
+      </svg>
+      <div><h1>Eules Spielewald</h1><p>Spiele zu Eules Reise und Training für den Test · <a href="index.html">zur Beat-Werkstatt</a></p></div>
+    </div>
+    <div class="pass" title="Für jedes geschaffte Spiel gibt es einen Stempel">
+      <small>Mein Beat-Pass</small>
+      <div class="stamps" id="stamps"></div>
+    </div>
+  </div>
+
+  <nav class="menu" id="menu"></nav>
+  <p class="intro" id="intro"></p>
+  <div class="stage" id="stage"></div>
+
+  <details class="teacher">
+    <summary>Für Lehrkräfte</summary>
+    <ul>
+      <li><b>Eules Reise:</b> Reihenfolge der acht Tiere im Hörspiel (Pop, Jazz, Rock, Oper, Punk, Reggae, Hip-Hop, Elektro).</li>
+      <li><b>Memory:</b> Tier und Musikrichtung finden zusammen.</li>
+      <li><b>Wer bin ich?</b> Drei Hinweise pro Tier: erst die Musik, dann die Geschichte, dann das Tier selbst. Wer früh rät, bekommt mehr Punkte.</li>
+      <li><b>Hör-Rätsel:</b> Die Songs aus dem Hörspiel laufen, ohne dass der Titel zu sehen ist. Die Kinder raten das Tier.</li>
+      <li><b>Beat-Millionär:</b> 12 Fragen mit steigender Schwierigkeit und zwei Jokern.</li>
+      <li><b>Test-Training</b> (passend zum Zwischentest A und B): <b>Bilder-Detektiv</b> (Bild zur Musikrichtung, u. a. E-Gitarre, Ghettoblaster, Synthesizer, Saxofon), <b>Richtig oder falsch?</b> (14 Sätze, davon 12 pro Runde), <b>Ich bin …</b> (Musikrichtung mit Wörterkasten aufschreiben, kleine Schreibfehler werden als „fast perfekt“ gezeigt) und <b>Meine Lieblingsmusik</b> (Satz mit „weil“ bauen).</li>
+      <li>Einen Stempel gibt es ab zwei Sternen. Der Beat-Pass wird nur im Browser des Geräts gespeichert.</li>
+    </ul>
+    <button class="btn ghost" id="resetPass" style="font-size:.9rem;padding:6px 12px">Beat-Pass leeren</button>
+  </details>
+</div>
+
+<script>
+const ANIMALS=[
+ {id:"fliege",art:"die",name:"Fliege",g:"Pop",c:"--g-pop",yt:"LRGUXaDtiQk"},
+ {id:"assel",art:"die",name:"Kellerassel",g:"Jazz",c:"--g-jazz",yt:"pKXcZwGZjaU"},
+ {id:"maulwurf",art:"der",name:"Maulwurf",g:"Rock",c:"--g-rock",yt:"UraR9AhcC7Q"},
+ {id:"motte",art:"die",name:"Motte",g:"Oper",c:"--g-oper",yt:"gWR7kqtByLU"},
+ {id:"katze",art:"die",name:"Katze",g:"Punk",c:"--g-punk",yt:"oYUk5r-Q3Ww"},
+ {id:"papagei",art:"der",name:"Papagei",g:"Reggae",c:"--g-reggae",yt:"J_NXL3sVvTQ"},
+ {id:"ratte",art:"die",name:"Ratte",g:"Hip-Hop",c:"--g-hiphop",yt:"YasxEJ9qXp0"},
+ {id:"fledermaus",art:"die",name:"Fledermaus",g:"Elektro",c:"--g-elektro",yt:"zcUQNmrsE4U"}
+];
+const A=Object.fromEntries(ANIMALS.map(a=>[a.id,a]));
+
+const RIDDLES={
+ fliege:["Meine Musik läuft viel im Radio. Den Refrain kann man sofort mitsingen.","Ich habe Eule einen richtigen Ohrwurm verpasst.","Ich summe und surre gern um Lampen und Obstschalen herum."],
+ assel:["Bei meiner Musik erfinden die Musiker Melodien spontan beim Spielen. Trompete und Saxofon sind dabei.","Ich schwärme von den alten Musiklegenden.","Ich wohne gern im Dunkeln und Feuchten, zum Beispiel im Keller."],
+ maulwurf:["Ich liebe laute E-Gitarren, kräftiges Schlagzeug und ein Gitarrensolo.","Eule trifft mich auf einem Festival-Zeltplatz.","Ich grabe Gänge unter der Erde und werfe Hügel auf."],
+ motte:["Meine Musik erzählt eine Geschichte. Sie wird mit kräftiger Stimme gesungen und von einem großen Orchester begleitet.","Mein Lieblingsstück hat Wolfgang Amadeus Mozart komponiert.","Ich fliege nachts gern zum Licht."],
+ katze:["Meine Musik ist schnell, kurz, laut und frech.","Ich finde: Man braucht nur wenige Gitarrengriffe, um loszulegen.","Ich habe Schnurrhaare und kann fauchen."],
+ papagei:["Meine Musik ist ganz entspannt. Die Gitarre spielt auf die Zwischenschläge.","Meine Musik kommt aus Jamaika, wie die von Bob Marley.","Ich habe bunte Federn und kann Wörter nachsprechen."],
+ ratte:["Bei meiner Musik wird nicht gesungen, sondern gerappt.","Ich erfinde meine Reime spontan: Das nennt man Freestyle.","Ich habe einen langen, nackten Schwanz und lebe gern in der Stadt."],
+ fledermaus:["Meine Musik kommt aus dem Computer und dem Synthesizer. Der Beat stampft immer weiter.","Ein DJ legt meine Musik im Club auf.","Ich schlafe tagsüber kopfüber hängend."]
+};
+
+const QUIZ=[
+ {q:"Welche Farben hat Eule?",a:["Blau und Gelb","Rot und Grün","Schwarz und Weiß","Lila und Orange"],h:"Schau dir Eule auf dem Hörspiel-Cover an."},
+ {q:"Wo wohnt Eule?",a:["In einem Wald am Rande der Stadt","Mitten in einer Großstadt","Auf einer Insel im Meer","Hoch oben in den Bergen"],h:"Es gibt dort viele Bäume, und die Stadt ist nicht weit."},
+ {q:"Womit beginnt Eules Reise?",a:["Eines Abends weckt sie wunderschöne Musik","Sie bekommt einen Brief","Sie verliert ihre Federn","Sie gewinnt ein Konzert-Ticket"],h:"Eule hört etwas, als sie schläft."},
+ {q:"Wie viele Tiere trifft Eule auf ihrer Reise?",a:["Acht","Drei","Fünf","Zwölf"],h:"So viele Musikrichtungen lernt sie kennen."},
+ {q:"Welches Tier trifft Eule als Erstes?",a:["Die Fliege","Die Ratte","Die Motte","Der Papagei"],h:"Die erste Musikrichtung ist Pop."},
+ {q:"Was verpasst die Pop-Fliege der Eule?",a:["Einen Ohrwurm","Einen Schnupfen","Eine neue Frisur","Einen Stich"],h:"Ein Lied, das man nicht mehr aus dem Kopf bekommt."},
+ {q:"Wo trifft Eule den Rock-Maulwurf?",a:["Auf einem Festival-Zeltplatz","In einer Kirche","In einer Bibliothek","Im Schwimmbad"],h:"Dort gibt es Zelte und große Konzerte."},
+ {q:"Welches Instrument ist typisch für Jazz?",a:["Saxofon","Dudelsack","Harfe","Blockflöte"],h:"Ein goldenes Blasinstrument mit vielen Klappen."},
+ {q:"Was macht die Hip-Hop-Ratte ganz spontan?",a:["Einen Freestyle-Rap","Ein Gitarrensolo","Eine Opern-Arie","Einen Walzer"],h:"Sie reimt, ohne vorher etwas aufzuschreiben."},
+ {q:"Wer hat die Musik für das Opern-Stück geschrieben?",a:["Wolfgang Amadeus Mozart","Bob Marley","Die Fledermaus","Rolf Zuckowski"],h:"Ein sehr berühmter Komponist aus Salzburg."},
+ {q:"Aus welchem Land kommt der Reggae?",a:["Jamaika","Norwegen","Japan","Österreich"],h:"Eine Insel in der Karibik."},
+ {q:"Wie heißt das Lied am Ende des Hörspiels?",a:["Finde deinen Beat","Eule, gute Nacht","Der Wald tanzt","Musik ist bunt"],h:"Darin geht es darum, die eigene Lieblingsmusik zu finden."}
+];
+const LADDER=[50,100,200,300,500,1000,2000,4000,8000,16000,32000,64000];
+
+const $=s=>document.querySelector(s);
+const el=(tag,attrs={},...kids)=>{const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs)){if(k==="style")e.setAttribute("style",v);else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);else if(v!==false&&v!=null)e.setAttribute(k,v===true?"":v)}for(const c of kids.flat()){if(c==null)continue;e.append(c.nodeType?c:document.createTextNode(c))}return e};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const setStage=(...k)=>$("#stage").replaceChildren(...k.filter(Boolean));
+const gc=id=>`--gc:var(${A[id].c})`;
+
+let actx=null;
+function tone(ok){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const n=ok?[523,659,784]:[220,185];n.forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain(),t=actx.currentTime+i*.09;o.type=ok?"triangle":"square";o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g).connect(actx.destination);o.start(t);o.stop(t+.2)})}catch(e){}}
+
+/* Beat-Pass */
+const GAMES=[
+ {id:"reise",name:"Eules Reise",sub:"Reihenfolge legen",intro:"Eule trifft auf ihrer Reise acht Tiere. In welcher Reihenfolge? Tippe die Tiere nacheinander an. Mit „Zurück“ nimmst du das letzte wieder weg."},
+ {id:"memory",name:"Memory",sub:"Tier + Musik",intro:"Finde die Paare: Welches Tier gehört zu welcher Musikrichtung? Decke immer zwei Karten auf."},
+ {id:"raetsel",name:"Wer bin ich?",sub:"Rätsel mit Hinweisen",intro:"Ein Tier erzählt von sich. Rate so früh wie möglich! Beim ersten Hinweis gibt es 3 Punkte, beim zweiten 2, beim dritten 1."},
+ {id:"hoeren",name:"Hör-Rätsel",sub:"Wer singt da?",intro:"Ein Lied aus dem Hörspiel läuft. Hör gut zu: Zu welchem Tier gehört es? Starte das Lied mit dem Abspielknopf."},
+ {id:"quiz",name:"Beat-Millionär",sub:"12 Fragen",intro:"Beantworte 12 Fragen zum Hörspiel und zur Musik. Du hast zwei Joker: 50:50 und den Eule-Tipp. Bei einer falschen Antwort ist das Spiel vorbei."},
+ {id:"bilder",grp:"test",name:"Bilder-Detektiv",sub:"Bild + Musik",intro:"Du siehst ein Bild. Zu welcher Musikrichtung passt es? Tippe auf die richtige Musik."},
+ {id:"rf",grp:"test",name:"Richtig oder falsch?",sub:"Sätze prüfen",intro:"Lies den Satz genau. Stimmt er? Dann tippe auf „Richtig“. Stimmt er nicht? Dann tippe auf „Falsch“."},
+ {id:"schreiben",grp:"test",name:"Ich bin …",sub:"Musik aufschreiben",intro:"Eine Musikrichtung stellt sich vor. Schreibe ihren Namen in das Feld. Die Wörter im Kasten helfen dir. Achte auf die richtige Schreibweise!"},
+ {id:"liebling",grp:"test",name:"Meine Lieblingsmusik",sub:"Satz mit „weil“",intro:"Welche Musik magst du am liebsten? Und warum? Baue deinen eigenen Satz. Schreibe ihn danach auf dein Blatt."}
+];
+let pass=new Set();
+try{pass=new Set(JSON.parse(localStorage.getItem("eule-pass")||"[]"))}catch(e){}
+function savePass(){try{localStorage.setItem("eule-pass",JSON.stringify([...pass]))}catch(e){}}
+function drawPass(){$("#stamps").replaceChildren(...GAMES.map((g,i)=>el("span",{class:"stamp"+(pass.has(g.id)?" on":""),title:g.name+(pass.has(g.id)?": geschafft":"")},pass.has(g.id)?"★":String(i+1))))}
+function earn(id,stars){if(stars>=2&&!pass.has(id)){pass.add(id);savePass();drawPass();return true}return false}
+function finish(id,stars,title,line,again){
+  const newStamp=earn(id,stars);
+  return el("div",{class:"done pop"},
+    el("h2",{},title),
+    el("div",{class:"stars"},[0,1,2].map(k=>el("span",{class:"star"+(k<stars?" on":"")}))),
+    el("p",{style:"margin:0"},line),
+    newStamp?el("div",{class:"feedback ok"},el("b",{},"Neuer Stempel im Beat-Pass!")):null,
+    pass.size===GAMES.length?el("div",{class:"feedback ok"},el("b",{},"Alle Stempel gesammelt! Du bist bereit für den Test.")):null,
+    el("div",{class:"row"},el("button",{class:"btn",onclick:again},"Noch einmal"),el("button",{class:"btn ghost",onclick:()=>show(nextGame(id))},"Nächstes Spiel")));
+}
+const nextGame=id=>GAMES[(GAMES.findIndex(g=>g.id===id)+1)%GAMES.length].id;
+
+/* Menü */
+let current=null;
+function show(id){
+  current=id;
+  document.querySelectorAll(".mbtn").forEach(b=>b.setAttribute("aria-current",b.dataset.g===id));
+  $("#intro").textContent=GAMES.find(g=>g.id===id).intro;
+  stopAudio();
+  ({reise:startReise,memory:startMemory,raetsel:startRaetsel,hoeren:startHoeren,quiz:startQuiz,bilder:startBilder,rf:startRF,schreiben:startSchreiben,liebling:startLiebling})[id]();
+}
+const mbtn=g=>el("button",{class:"mbtn"+(g.grp?" test":""),"data-g":g.id,onclick:()=>show(g.id)},el("b",{},g.name),el("span",{},g.sub));
+$("#menu").replaceChildren(
+  el("h2",{class:"mhead"},"Spiele zur Geschichte"),el("div",{class:"mgrid"},GAMES.filter(g=>!g.grp).map(mbtn)),
+  el("h2",{class:"mhead"},"Test-Training"),el("div",{class:"mgrid"},GAMES.filter(g=>g.grp).map(mbtn)));
+function stopAudio(){document.querySelectorAll("#stage iframe").forEach(f=>f.remove())}
+
+/* 1 Eules Reise */
+function startReise(){
+  const pool=shuffle(ANIMALS);
+  let place=Array(8).fill(null),locked=new Set(),stack=[],tries=0,flash=null;
+  function draw(){
+    const used=new Set(place.filter(Boolean));
+    const slots=el("div",{class:"path"},ANIMALS.map((_,i)=>{
+      const id=place[i];let cls="slot";
+      if(locked.has(i))cls+=" ok";else if(flash&&flash.has(i))cls+=" bad";else if(id)cls+=" filled";
+      return el("div",{class:cls},el("i",{},(i+1)+". Tier"),id?A[id].name:"");
+    }));
+    const btns=el("div",{class:"animals"},pool.map(a=>el("button",{class:"abtn",disabled:used.has(a.id)||!!flash,onclick:()=>{const n=place.findIndex(x=>!x);if(n<0)return;place[n]=a.id;stack.push(n);draw()}},a.name,el("small",{},a.g))));
+    const full=place.every(Boolean);
+    const fb=flash?el("div",{class:"feedback no"},el("b",{},`${locked.size} von 8 stehen richtig.`),el("div",{},"Die grünen bleiben liegen. Die roten musst du neu legen.")):null;
+    setStage(
+      el("div",{class:"progress"},el("span",{},`${used.size} von 8 Tieren gelegt`),el("div",{class:"bar"},el("i",{style:`width:${used.size/8*100}%`})),el("span",{},tries?`Versuch ${tries+ (flash?0:1)}`:"")),
+      slots,btns,fb,
+      el("div",{class:"row"},
+        flash?el("button",{class:"btn",onclick:()=>{flash.forEach(i=>place[i]=null);flash=null;stack=[];draw()}},"Neu legen")
+        :el("button",{class:"btn ghost",disabled:!stack.length,onclick:()=>{place[stack.pop()]=null;draw()}},"Zurück"),
+        flash?null:el("button",{class:"btn",disabled:!full,onclick:check},"Prüfen")));
+  }
+  function check(){
+    tries++;
+    place.forEach((id,i)=>{if(id===ANIMALS[i].id)locked.add(i)});
+    if(locked.size===8){
+      tone(true);const stars=tries===1?3:tries===2?2:1;
+      setStage(finish("reise",stars,"Genau so ging Eules Reise!",`Alle 8 Tiere richtig, im ${tries}. Versuch.`,startReise),
+        el("div",{class:"card"},ANIMALS.map(a=>a.name+" ("+a.g+")").join(" → ")));
+      return;
+    }
+    tone(false);flash=new Set(place.map((_,i)=>i).filter(i=>!locked.has(i)));draw();
+  }
+  draw();
+}
+
+/* 2 Memory */
+function startMemory(){
+  const cards=shuffle(ANIMALS.flatMap(a=>[{k:a.id,t:a.name,s:"Tier"},{k:a.id,t:a.g,s:"Musik"}]));
+  let open=[],matched=new Set(),moves=0,lock=false;
+  function draw(){
+    const grid=el("div",{class:"memory"},cards.map((c,i)=>{
+      const isOpen=open.includes(i),isM=matched.has(c.k);
+      return el("button",{class:"mcard"+(isM?" match":isOpen?" open":""),style:gc(c.k),"aria-label":isOpen||isM?c.t:"verdeckte Karte",disabled:isM||isOpen,onclick:()=>flip(i)},
+        isOpen||isM?el("span",{},c.t,el("small",{},c.s)):el("span",{class:"back"},"♪"));
+    }));
+    setStage(el("div",{class:"progress"},el("span",{},`${matched.size} von 8 Paaren`),el("div",{class:"bar"},el("i",{style:`width:${matched.size/8*100}%`})),el("span",{},`Züge: ${moves}`)),grid);
+  }
+  function flip(i){
+    if(lock)return;open.push(i);
+    if(open.length===2){
+      moves++;const[a,b]=open.map(x=>cards[x]);
+      if(a.k===b.k&&a.s!==b.s){matched.add(a.k);open=[];tone(true);
+        if(matched.size===8){const stars=moves<=12?3:moves<=18?2:1;setStage(finish("memory",stars,"Alle Paare gefunden!",`Du hast ${moves} Züge gebraucht.`,startMemory));return}
+      }else{lock=true;draw();setTimeout(()=>{open=[];lock=false;draw()},1100);return}
+    }
+    draw();
+  }
+  draw();
+}
+
+/* 3 Wer bin ich? */
+function startRaetsel(){
+  const list=shuffle(ANIMALS);let i=0,score=0;
+  function round(){
+    if(i>=list.length){const stars=score>=20?3:score>=14?2:score>=8?1:0;setStage(finish("raetsel",stars,stars===3?"Rätsel-Profi!":"Gut geraten!",`Du hast ${score} von 24 Punkten.`,startRaetsel));return}
+    const a=list[i];let shown=1,done=false;
+    const fb=el("div",{});
+    const next=el("button",{class:"btn",hidden:true,onclick:()=>{i++;round()}},i===list.length-1?"Ergebnis ansehen":"Nächstes Rätsel");
+    const more=el("button",{class:"btn ghost",onclick:()=>{if(shown<3){shown++;drawClues()}}},"Noch ein Hinweis");
+    const clues=el("div",{class:"clues"});
+    function drawClues(){clues.replaceChildren(...RIDDLES[a.id].slice(0,shown).map((c,k)=>el("div",{class:"clue pop"},el("b",{},`Hinweis ${k+1}`),el("span",{},c))));more.hidden=shown>=3||done}
+    const btns=el("div",{class:"animals"},ANIMALS.map(x=>el("button",{class:"abtn","data-a":x.id,onclick:()=>pick(x.id)},x.name)));
+    function pick(id){
+      if(done)return;
+      if(id===a.id){
+        done=true;const pts=4-shown;score+=pts;tone(true);
+        btns.querySelectorAll(".abtn").forEach(b=>{b.disabled=true;if(b.dataset.a===id)b.classList.add("right")});
+        fb.replaceChildren(el("div",{class:"feedback ok"},el("b",{},`Richtig! Ich bin ${a.art} ${a.name}. +${pts}`),el("div",{},`Meine Lieblingsmusik ist ${a.g}.`)));
+        shown=3;drawClues();more.hidden=true;next.hidden=false;next.focus();
+      }else{
+        tone(false);const b=btns.querySelector(`[data-a="${id}"]`);b.disabled=true;b.classList.add("wrong");
+        if(shown<3){shown++;drawClues();fb.replaceChildren(el("div",{class:"feedback no"},el("b",{},"Nicht ganz."),el("div",{},"Hier kommt noch ein Hinweis.")))}
+        else{done=true;btns.querySelectorAll(".abtn").forEach(x=>{x.disabled=true;if(x.dataset.a===a.id)x.classList.add("right")});fb.replaceChildren(el("div",{class:"feedback no"},el("b",{},`Das war ${a.art} ${a.name}.`),el("div",{},`Die Lieblingsmusik ist ${a.g}.`)));next.hidden=false}
+      }
+    }
+    drawClues();
+    setStage(
+      el("div",{class:"progress"},el("span",{},`Rätsel ${i+1} von ${list.length}`),el("div",{class:"bar"},el("i",{style:`width:${i/list.length*100}%`})),el("span",{},`Punkte: ${score}`)),
+      el("div",{class:"card"},"Wer bin ich?"),clues,el("div",{class:"row"},more),btns,fb,el("div",{class:"row"},next));
+  }
+  round();
+}
+
+/* 4 Hör-Rätsel */
+function startHoeren(){
+  const list=shuffle(ANIMALS);let i=0,right=0;
+  function round(){
+    if(i>=list.length){const stars=right>=7?3:right>=5?2:right>=3?1:0;setStage(finish("hoeren",stars,stars===3?"Super Ohren!":"Gut zugehört!",`${right} von 8 Liedern erkannt.`,startHoeren));return}
+    const a=list[i];let done=false;
+    const frame=el("div",{class:"frame"},el("button",{class:"btn",style:"position:absolute;inset:0;margin:auto;width:max-content;height:max-content;z-index:2",onclick:e=>{
+      frame.replaceChildren(
+        el("iframe",{src:`https://www.youtube-nocookie.com/embed/${a.yt}?autoplay=1&rel=0&controls=1&modestbranding=1&start=8`,title:"Hör-Rätsel",allow:"autoplay; encrypted-media"}),
+        el("div",{class:"cover",id:"cover"},el("span",{},"♪ Hör gut zu …",el("br"),el("small",{style:"font-family:var(--f-body);font-size:.8rem;opacity:.85"},"Nichts zu hören? Tippe einmal auf dieses Feld."))));
+    }},"▶ Lied abspielen"));
+    const fb=el("div",{});
+    const next=el("button",{class:"btn",hidden:true,onclick:()=>{i++;round()}},i===list.length-1?"Ergebnis ansehen":"Nächstes Lied");
+    const btns=el("div",{class:"animals"},ANIMALS.map(x=>el("button",{class:"abtn","data-a":x.id,onclick:()=>{
+      if(done)return;done=true;const ok=x.id===a.id;if(ok)right++;tone(ok);
+      btns.querySelectorAll(".abtn").forEach(b=>{b.disabled=true;if(b.dataset.a===a.id)b.classList.add("right");else if(b.dataset.a===x.id)b.classList.add("wrong")});
+      const c=frame.querySelector(".cover");if(c)c.remove();
+      fb.replaceChildren(el("div",{class:"feedback "+(ok?"ok":"no")},el("b",{},ok?"Richtig erkannt!":"Nicht ganz."),el("div",{},`Das ist der ${a.g}-Song. Er gehört ${a.art==="der"?"zum":"zur"} ${a.name}.`)));
+      next.hidden=false;next.focus();
+    }},x.name)));
+    setStage(
+      el("div",{class:"progress"},el("span",{},`Lied ${i+1} von ${list.length}`),el("div",{class:"bar"},el("i",{style:`width:${i/list.length*100}%`})),el("span",{},`Richtig: ${right}`)),
+      frame,el("p",{style:"margin:0;text-align:center;color:var(--muted)"},"Welches Tier singt hier seine Lieblingsmusik?"),btns,fb,el("div",{class:"row"},next));
+  }
+  round();
+}
+
+/* 5 Beat-Millionär */
+function startQuiz(){
+  let i=0,used={half:false,tip:false};
+  function round(){
+    if(i>=QUIZ.length){tone(true);setStage(finish("quiz",3,"Beat-Millionär!","Alle 12 Fragen richtig: 64.000 Beat-Punkte!",startQuiz));return}
+    const item=QUIZ[i];const correct=item.a[0];const opts=shuffle(item.a);let done=false;
+    const ladder=el("div",{class:"ladder"},LADDER.map((v,k)=>el("span",{class:"rung"+(k===i?" now":k<i?" won":"")},v.toLocaleString("de-DE"))));
+    const hint=el("div",{});const fb=el("div",{});
+    const next=el("button",{class:"btn",hidden:true,onclick:()=>{i++;round()}},"Nächste Frage");
+    const answers=el("div",{class:"answers"},opts.map((t,k)=>el("button",{class:"ans","data-t":t,onclick:()=>{
+      if(done)return;done=true;const ok=t===correct;tone(ok);
+      answers.querySelectorAll(".ans").forEach(b=>{b.disabled=true;if(b.dataset.t===correct)b.classList.add("right");else if(b.dataset.t===t)b.classList.add("wrong")});
+      j1.disabled=j2.disabled=true;
+      if(ok){fb.replaceChildren(el("div",{class:"feedback ok"},el("b",{},`Richtig! ${LADDER[i].toLocaleString("de-DE")} Beat-Punkte`)));next.hidden=false;next.textContent=i===QUIZ.length-1?"Zum Ergebnis":"Nächste Frage";next.focus()}
+      else{
+        const won=i>0?LADDER[i-1]:0;const stars=i>=9?2:i>=5?1:0;
+        setTimeout(()=>setStage(finish("quiz",stars,"Spiel vorbei",`Die richtige Antwort war: ${correct}. Du hast ${i} Fragen geschafft und ${won.toLocaleString("de-DE")} Beat-Punkte.`,startQuiz)),1600);
+      }
+    }},el("b",{},"ABCD"[k]+":"),el("span",{},t))));
+    const j1=el("button",{class:"btn ghost",disabled:used.half,onclick:()=>{used.half=true;j1.disabled=true;shuffle(opts.filter(t=>t!==correct)).slice(0,2).forEach(t=>answers.querySelector(`[data-t="${CSS.escape(t)}"]`).classList.add("gone"))}},"50:50");
+    const j2=el("button",{class:"btn ghost",disabled:used.tip,onclick:()=>{used.tip=true;j2.disabled=true;hint.replaceChildren(el("div",{class:"hint pop"},el("b",{},"Eule flüstert: "),item.h))}},"Eule-Tipp");
+    setStage(ladder,el("div",{class:"card pop"},item.q),answers,el("div",{class:"jokers"},j1,j2),hint,fb,el("div",{class:"row"},next));
+  }
+  round();
+}
+
+
+/* ===== Test-Training ===== */
+const GN=[["Pop","--g-pop"],["Jazz","--g-jazz"],["Rock","--g-rock"],["Oper","--g-oper"],["Punk","--g-punk"],["Reggae","--g-reggae"],["Hip-Hop","--g-hiphop"],["Elektro","--g-elektro"]];
+function genreBtns(onPick){return el("div",{class:"gbtns"},GN.map(([n,c])=>el("button",{class:"abtn","data-g":n,style:`border-color:var(${c});color:var(${c})`,onclick:()=>onPick(n)},n)))}
+function markBtns(box,right,picked){box.querySelectorAll("button").forEach(b=>{b.disabled=true;b.style.removeProperty("color");if(b.dataset.g===right)b.classList.add("right");else if(b.dataset.g===picked)b.classList.add("wrong")})}
+
+const S='stroke="var(--fg)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"';
+const PICS=[
+ {g:"Rock",n:"eine E-Gitarre",svg:`<svg viewBox="0 0 64 64"><path d="M33 31 L52 12" ${S} stroke-width="5"/><path d="M50 8 l8 0 0 8 -6 0 z" fill="var(--fg)"/><path d="M14 33 q-6 4 -4 12 q2 9 11 9 q8 0 11 -6 q2 -4 6 -5 q3 -4 -1 -8 q-4 -3 -8 1 q-3 1 -6 -2 q-5 -3 -9 -1z" fill="var(--g-rock)" ${S}/><circle cx="24" cy="41" r="3" fill="var(--surface)" ${S}/><path d="M16 49 l8 -8" ${S}/></svg>`},
+ {g:"Jazz",n:"ein Saxofon",svg:`<svg viewBox="0 0 64 64"><path d="M38 6 l6 4 0 30 q0 16 -14 16 q-12 0 -12 -12 l0 -6" fill="none" stroke="var(--owl)" stroke-width="8" stroke-linecap="round"/><path d="M8 28 q10 4 20 0 l-4 10 -12 0z" fill="var(--owl)" ${S}/><circle cx="44" cy="20" r="2" fill="var(--fg)"/><circle cx="44" cy="28" r="2" fill="var(--fg)"/><circle cx="44" cy="36" r="2" fill="var(--fg)"/><path d="M36 4 l5 3" ${S}/></svg>`},
+ {g:"Hip-Hop",n:"ein Ghettoblaster (ein großer Kassettenrekorder)",svg:`<svg viewBox="0 0 64 64"><path d="M20 18 l0 -6 24 0 0 6" fill="none" ${S}/><rect x="6" y="18" width="52" height="32" rx="5" fill="var(--surface)" ${S}/><circle cx="18" cy="36" r="8" fill="var(--g-hiphop)" ${S}/><circle cx="46" cy="36" r="8" fill="var(--g-hiphop)" ${S}/><circle cx="18" cy="36" r="3" fill="var(--fg)"/><circle cx="46" cy="36" r="3" fill="var(--fg)"/><rect x="27" y="30" width="10" height="9" rx="1.5" fill="var(--surface-2)" ${S}/><path d="M12 24 l8 0 M44 24 l8 0" ${S}/></svg>`},
+ {g:"Elektro",n:"ein Synthesizer",svg:`<svg viewBox="0 0 64 64"><rect x="4" y="16" width="56" height="34" rx="5" fill="var(--g-elektro)" ${S}/><path d="M10 24 q4 -6 8 0 t8 0 t8 0 t8 0 t8 0" fill="none" stroke="var(--owl)" stroke-width="2.5"/><rect x="8" y="32" width="48" height="14" fill="var(--surface)" ${S}/><path d="M16 32 v14 M24 32 v14 M32 32 v14 M40 32 v14 M48 32 v14" ${S} stroke-width="1.5"/><path d="M14 32 h4 v8 h-4z M22 32 h4 v8 h-4z M38 32 h4 v8 h-4z M46 32 h4 v8 h-4z" fill="var(--fg)"/></svg>`},
+ {g:"Jazz",n:"eine Trompete",svg:`<svg viewBox="0 0 64 64"><path d="M6 34 l34 0" stroke="var(--owl)" stroke-width="6" stroke-linecap="round"/><path d="M40 28 l18 -10 0 32 -18 -10z" fill="var(--owl)" ${S}/><path d="M14 34 q0 12 12 12 l10 0 q4 0 4 -6" fill="none" stroke="var(--owl)" stroke-width="5"/><path d="M20 22 v10 M26 22 v10 M32 22 v10" ${S} stroke-width="4"/><circle cx="20" cy="20" r="2.5" fill="var(--fg)"/><circle cx="26" cy="20" r="2.5" fill="var(--fg)"/><circle cx="32" cy="20" r="2.5" fill="var(--fg)"/><path d="M4 31 v6" ${S}/></svg>`},
+ {g:"Hip-Hop",n:"ein Plattenspieler, wie ihn der DJ benutzt",svg:`<svg viewBox="0 0 64 64"><rect x="6" y="12" width="52" height="42" rx="4" fill="var(--surface)" ${S}/><circle cx="28" cy="33" r="16" fill="var(--fg)"/><circle cx="28" cy="33" r="11" fill="none" stroke="var(--surface-2)" stroke-width="1"/><circle cx="28" cy="33" r="5" fill="var(--g-hiphop)"/><path d="M50 16 l0 22 -10 6" fill="none" ${S} stroke-width="3"/><circle cx="50" cy="16" r="3" fill="var(--fg)"/></svg>`},
+ {g:"Oper",n:"eine große Bühne mit Vorhang",svg:`<svg viewBox="0 0 64 64"><rect x="4" y="54" width="56" height="6" fill="var(--owl)" ${S}/><path d="M4 8 l22 0 q-6 14 -12 22 q-2 10 -4 24 l-6 0z" fill="var(--bad)" ${S}/><path d="M60 8 l-22 0 q6 14 12 22 q2 10 4 24 l6 0z" fill="var(--bad)" ${S}/><rect x="4" y="6" width="56" height="6" fill="var(--g-oper)" ${S}/><circle cx="32" cy="30" r="5" fill="var(--surface)" ${S}/><path d="M32 36 l-8 18 16 0z" fill="var(--g-oper)" ${S}/><path d="M28 40 l-6 -6 M36 40 l6 -6" ${S}/><path d="M44 22 l0 -8 4 1" fill="none" ${S}/><circle cx="42.5" cy="22" r="2" fill="var(--fg)"/></svg>`},
+ {g:"Elektro",n:"ein Computer",svg:`<svg viewBox="0 0 64 64"><rect x="10" y="12" width="44" height="30" rx="3" fill="var(--surface)" ${S}/><path d="M16 30 l5 0 3 -9 4 16 4 -12 3 5 13 0" fill="none" stroke="var(--g-elektro)" stroke-width="3" stroke-linejoin="round"/><path d="M4 48 l56 0 -4 6 -48 0z" fill="var(--surface-2)" ${S}/></svg>`}
+];
+function startBilder(){
+  const list=shuffle(PICS);let i=0,right=0;
+  function round(){
+    if(i>=list.length){const stars=right>=7?3:right>=5?2:right>=3?1:0;setStage(finish("bilder",stars,stars===3?"Bilder-Profi!":"Gut erkannt!",`${right} von ${list.length} Bildern richtig.`,startBilder));return}
+    const p=list[i];let done=false;const fb=el("div",{});
+    const next=el("button",{class:"btn",hidden:true,onclick:()=>{i++;round()}},i===list.length-1?"Ergebnis ansehen":"Nächstes Bild");
+    const pic=el("div",{class:"pic pop",role:"img","aria-label":"Bild"});pic.innerHTML=p.svg;
+    const btns=genreBtns(g=>{if(done)return;done=true;const ok=g===p.g;if(ok)right++;tone(ok);markBtns(btns,p.g,g);
+      fb.replaceChildren(el("div",{class:"feedback "+(ok?"ok":"no")},el("b",{},ok?"Richtig!":"Nicht ganz."),el("div",{},`Das ist ${p.n}. Es passt zu ${p.g}.`)));next.hidden=false;next.focus()});
+    setStage(el("div",{class:"progress"},el("span",{},`Bild ${i+1} von ${list.length}`),el("div",{class:"bar"},el("i",{style:`width:${i/list.length*100}%`})),el("span",{},`Richtig: ${right}`)),
+      pic,el("p",{style:"margin:0;text-align:center;color:var(--muted)"},"Zu welcher Musik passt das Bild?"),btns,fb,el("div",{class:"row"},next));
+  }
+  round();
+}
+
+const RF=[
+ {t:"Punk ist leise und langsam.",r:false,w:"Punk ist schnell, laut und frech."},
+ {t:"Punk ist schnell, laut und frech.",r:true,w:"Genau so klingt Punk."},
+ {t:"Elektro-Musik wird mit Computern und Synthesizern gemacht.",r:true,w:"Die Klänge kommen aus dem Computer."},
+ {t:"Elektro-Musik spielt ein großes Orchester.",r:false,w:"Ein großes Orchester spielt in der Oper. Elektro kommt aus dem Computer."},
+ {t:"Pop-Lieder haben oft einen Refrain zum Mitsingen.",r:true,w:"Der Refrain wird zum Ohrwurm."},
+ {t:"Rock wird meistens mit Geige und Harfe gespielt.",r:false,w:"Bei Rock hört man E-Gitarre, Bass und Schlagzeug."},
+ {t:"Bei Rock hört man laute E-Gitarren.",r:true,w:"Rock ist laut, mit E-Gitarre und kräftigem Schlagzeug."},
+ {t:"In der Oper wird gesungen.",r:true,w:"Oper ist Theater mit Gesang."},
+ {t:"In der Oper gibt es kein Orchester.",r:false,w:"In der Oper spielt ein großes Orchester."},
+ {t:"Reggae kommt von der Insel Jamaika.",r:true,w:"Bob Marley kam auch aus Jamaika."},
+ {t:"Reggae klingt hektisch und wild.",r:false,w:"Reggae klingt entspannt und gemütlich."},
+ {t:"Beim Hip-Hop wird gerappt: Sprechgesang mit Reimen.",r:true,w:"Dazu gibt es einen starken Beat."},
+ {t:"Jazz-Musiker erfinden die Musik oft beim Spielen.",r:true,w:"Das nennt man Improvisation."},
+ {t:"Beim Jazz hört man vor allem Computerklänge.",r:false,w:"Beim Jazz hört man Trompete und Saxofon."}
+];
+function startRF(){
+  const list=shuffle(RF).slice(0,12);let i=0,right=0;
+  function round(){
+    if(i>=list.length){const stars=right>=11?3:right>=8?2:right>=5?1:0;setStage(finish("rf",stars,stars===3?"Super genau gelesen!":"Gut gemacht!",`${right} von ${list.length} Sätzen richtig erkannt.`,startRF));return}
+    const it=list[i];let done=false;const fb=el("div",{});
+    const next=el("button",{class:"btn",hidden:true,onclick:()=>{i++;round()}},i===list.length-1?"Ergebnis ansehen":"Nächster Satz");
+    const mk=(lbl,val)=>el("button",{class:"rf","data-v":String(val),onclick:()=>{if(done)return;done=true;const ok=val===it.r;if(ok)right++;tone(ok);
+      box.querySelectorAll(".rf").forEach(b=>{b.disabled=true;if(b.dataset.v===String(it.r))b.classList.add("right");else b.classList.add(ok?"x":"wrong")});
+      fb.replaceChildren(el("div",{class:"feedback "+(ok?"ok":"no")},el("b",{},ok?"Richtig!":"Nicht ganz."),el("div",{},`Der Satz ist ${it.r?"richtig":"falsch"}. ${it.w}`)));next.hidden=false;next.focus()}},lbl);
+    const box=el("div",{class:"rfbtns"},mk("Richtig ✓",true),mk("Falsch ✗",false));
+    setStage(el("div",{class:"progress"},el("span",{},`Satz ${i+1} von ${list.length}`),el("div",{class:"bar"},el("i",{style:`width:${i/list.length*100}%`})),el("span",{},`Richtig: ${right}`)),
+      el("div",{class:"statement pop"},it.t),box,fb,el("div",{class:"row"},next));
+  }
+  round();
+}
+
+const ICHBIN=[
+ {g:"Hip-Hop",t:"Ich bin Sprechgesang mit Reimen. Dazu gibt es einen starken Beat."},
+ {g:"Jazz",t:"Die Musiker erfinden die Musik oft beim Spielen. Man hört Trompete und Saxofon."},
+ {g:"Reggae",t:"Ich komme von der Insel Jamaika. Ich klinge entspannt und gemütlich."},
+ {g:"Oper",t:"Ich bin Theater mit Gesang. Es gibt ein Orchester, Kostüme und eine große Bühne."},
+ {g:"Rock",t:"Ich bin laut. Man hört die E-Gitarre und ein kräftiges Schlagzeug."},
+ {g:"Punk",t:"Ich bin schnell, kurz, laut und frech. Man braucht nur wenige Gitarrengriffe."},
+ {g:"Pop",t:"Ich laufe oft im Radio. Meinen Refrain kann man gut mitsingen."},
+ {g:"Elektro",t:"Meine Klänge kommen aus dem Computer und dem Synthesizer. Mein Beat stampft immer weiter."}
+];
+const norm=x=>x.toLowerCase().replace(/[\s\-]/g,"").trim();
+function startSchreiben(){
+  const list=shuffle(ICHBIN);let i=0,right=0;
+  function round(){
+    if(i>=list.length){const stars=right>=7?3:right>=5?2:right>=3?1:0;setStage(finish("schreiben",stars,stars===3?"Alles richtig geschrieben!":"Gut gemacht!",`${right} von ${list.length} Musikrichtungen richtig geschrieben.`,startSchreiben));return}
+    const it=list[i];let done=false,tries=0;const fb=el("div",{});
+    const bankWords=shuffle([it.g,...shuffle(GN.map(x=>x[0]).filter(x=>x!==it.g)).slice(0,3)]);
+    const inp=el("input",{id:"ichbin-input",type:"text",autocomplete:"off",autocapitalize:"off",spellcheck:"false","aria-label":"Musikrichtung"});
+    const next=el("button",{class:"btn",hidden:true,onclick:()=>{i++;round()}},i===list.length-1?"Ergebnis ansehen":"Nächstes Rätsel");
+    const check=el("button",{class:"btn",onclick:go},"Prüfen");
+    inp.addEventListener("keydown",e=>{if(e.key==="Enter")go()});
+    function go(){
+      if(done)return;const v=inp.value.trim();if(!v){inp.focus();return}
+      tries++;
+      const exact=v===it.g, near=norm(v)===norm(it.g);
+      if(exact||near){done=true;if(tries===1)right++;tone(true);inp.disabled=true;check.hidden=true;
+        fb.replaceChildren(el("div",{class:"feedback ok"},el("b",{},exact?"Richtig!":"Fast perfekt!"),el("div",{},exact?`Ich bin ${it.g}.`:`So schreibt man es genau: ${it.g}`)));next.hidden=false;next.focus();}
+      else if(tries<2){tone(false);fb.replaceChildren(el("div",{class:"feedback no"},el("b",{},"Noch nicht."),el("div",{},"Lies noch einmal genau und schau in den Wörterkasten.")));inp.select()}
+      else{done=true;tone(false);inp.disabled=true;check.hidden=true;fb.replaceChildren(el("div",{class:"feedback no"},el("b",{},`Ich bin ${it.g}.`),el("div",{},"Schreib das Wort zum Üben einmal auf dein Blatt.")));next.hidden=false;next.focus()}
+    }
+    setStage(el("div",{class:"progress"},el("span",{},`Rätsel ${i+1} von ${list.length}`),el("div",{class:"bar"},el("i",{style:`width:${i/list.length*100}%`})),el("span",{},`Richtig: ${right}`)),
+      el("div",{class:"statement pop"},it.t),
+      el("div",{class:"bank","aria-label":"Wörterkasten"},el("strong",{style:"align-self:center;color:var(--muted);font-size:.9rem"},"Setze ein:"),bankWords.map(w=>el("span",{},w))),
+      el("div",{class:"write"},el("label",{for:"ichbin-input"},"Ich bin"),inp,check),fb,el("div",{class:"row"},next));
+    setTimeout(()=>inp.focus(),50);
+  }
+  round();
+}
+
+const WHY={
+ Pop:["man den Refrain gut mitsingen kann","die Lieder gute Laune machen","man gut dazu tanzen kann"],
+ Jazz:["die Musiker beim Spielen Neues erfinden","ich Trompete und Saxofon mag","die Musik so schön swingt"],
+ Rock:["die E-Gitarre so laut ist","das Schlagzeug so kräftig klingt","ich Gitarrensolos mag"],
+ Oper:["die Sänger so kräftige Stimmen haben","ein großes Orchester spielt","eine Geschichte auf der Bühne erzählt wird"],
+ Punk:["die Musik schnell und wild ist","die Lieder laut und frech sind","jeder mitmachen kann"],
+ Reggae:["die Musik entspannt und gemütlich klingt","sie von der Insel Jamaika kommt","der Bass so tief ist"],
+ "Hip-Hop":["gerappt wird","die Reime so cool sind","der Beat so stark ist"],
+ Elektro:["die Klänge aus dem Computer kommen","der Beat immer weitergeht","man im Club dazu tanzen kann"]
+};
+function startLiebling(){
+  let g=null,picked=[];
+  function draw(){
+    const gb=genreBtns(n=>{g=n;picked=[];draw()});
+    if(g)gb.querySelectorAll("button").forEach(b=>{if(b.dataset.g===g){b.style.background=`var(${GN.find(x=>x[0]===g)[1]})`;b.style.color="var(--surface)"}});
+    const parts=[];
+    if(g){
+      const own=el("input",{id:"own-reason",type:"text",placeholder:"Eigener Grund, z. B. ich dazu tanze",style:"font:inherit;padding:8px 12px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--fg);width:min(360px,100%)"});
+      own.addEventListener("change",()=>{const v=own.value.trim().replace(/^weil\s+/i,"").replace(/[.!]+$/,"");picked=picked.filter(x=>!x.own);if(v)picked.push({t:v,own:true});picked=picked.slice(-2);draw()});
+      parts.push(el("p",{style:"margin:0;font-weight:700"},"Warum? Wähle einen oder zwei Gründe:"),
+        el("div",{class:"reasons"},WHY[g].map(r=>el("button",{class:"reason","aria-pressed":String(picked.some(x=>x.t===r)),onclick:()=>{if(picked.some(x=>x.t===r))picked=picked.filter(x=>x.t!==r);else{picked.push({t:r});if(picked.length>2)picked.shift()}draw()}},"weil "+r))),
+        el("div",{class:"write",style:"justify-content:flex-start"},el("label",{for:"own-reason",style:"font-size:1rem"},"oder: weil"),own));
+      if(picked.length){
+        const why=picked.map(x=>x.t).join(" und ");
+        parts.push(el("div",{class:"sentence pop"},"Ich mag am liebsten ",el("b",{},g),", weil ",why,"."),
+          el("p",{style:"margin:0;color:var(--muted)"},"Lies deinen Satz laut vor. Dann schreibe ihn auf dein Blatt."),
+          el("div",{class:"row"},el("button",{class:"btn",onclick:()=>{tone(true);setStage(finish("liebling",3,"Toller Satz!",`Ich mag am liebsten ${g}, weil ${why}.`,startLiebling))}},"Fertig")));
+      }
+    }
+    setStage(el("p",{style:"margin:0;font-weight:700"},"Welche Musik magst du am liebsten?"),gb,...parts);
+  }
+  draw();
+}
+
+$("#resetPass").addEventListener("click",()=>{pass=new Set();savePass();drawPass()});
+drawPass();
+const start=(location.hash||"").slice(1);
+show(GAMES.some(g=>g.id===start)?start:"reise");
+</script>
+</body>
+</html>
