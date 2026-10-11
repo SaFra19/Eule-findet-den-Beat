@@ -108,7 +108,7 @@ details.merk ul{margin:8px 0 0;padding-left:20px;font-size:.95rem}
 .big-listen .play::after{border-left-color:var(--night)}
 .done{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
 .stars{display:flex;gap:6px;justify-content:center}
-.star{width:44px;height:44px;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);background:var(--surface-2)}
+.star{display:inline-block;width:44px;height:44px;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);background:var(--surface-2)}
 .star.on{background:var(--owl)}
 .pop{animation:pop .45s ease}
 @keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
@@ -124,7 +124,9 @@ details.merk ul{margin:8px 0 0;padding-left:20px;font-size:.95rem}
 .rcard .head a{font-size:.85rem;color:var(--night);white-space:nowrap}
 .rate{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
 .rate button{background:none;border:0;padding:2px}
-.rate button .star{width:34px;height:34px}
+.rate button{min-width:44px;min-height:44px;display:grid;place-items:center;touch-action:manipulation}
+.rate button .star{display:block;width:36px;height:36px;background:var(--line)}
+.rate button.on .star{background:var(--owl)}
 .rate button:hover .star,.rate button.hl .star{background:var(--owl)}
 .avg{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums;margin-left:6px}
 .thanks{font-size:.85rem;color:var(--good);font-weight:700}
@@ -403,7 +405,7 @@ function drawRate(){
   $("#rateList").replaceChildren(...SONGS.map(s=>{
     const arr=by[s.id]||[];const avg=arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;
     const rate=el("div",{class:"rate",role:"group","aria-label":"Sterne für "+s.t},
-      [1,2,3,4,5].map(n=>el("button",{"aria-label":n+" Sterne",onmouseenter:e=>hl(e,n),onmouseleave:e=>hl(e,0),onfocus:e=>hl(e,n),onblur:e=>hl(e,0),onclick:()=>vote(s,n)},el("span",{class:"star"}))),
+      [1,2,3,4,5].map(n=>el("button",{class:justRated[s.id]>=n?"on":null,"aria-label":n+(n===1?" Stern":" Sterne"),onmouseenter:canHover?e=>hl(e,n):null,onmouseleave:canHover?e=>hl(e,0):null,onclick:()=>vote(s,n)},el("span",{class:"star"}))),
       el("span",{class:"avg"},arr.length?`Ø ${avg.toFixed(1).replace(".",",")} · ${arr.length} Stimme${arr.length===1?"":"n"}`:"noch keine Stimme"),
       justRated[s.id]?el("span",{class:"thanks"},`Danke! ${justRated[s.id]} Sterne`):null);
     return el("div",{class:"rcard",style:gc(s.g)},
@@ -416,7 +418,8 @@ function drawRate(){
   const gb=GENRES.map(g=>{const a=votes.filter(v=>v.g===g.id).map(v=>v.stars);return{g,n:a.length,avg:a.length?a.reduce((x,y)=>x+y,0)/a.length:0}}).filter(x=>x.n).sort((a,b)=>b.avg-a.avg);
   $("#chartGenres").replaceChildren(...(gb.length?gb.map(x=>el("div",{class:"hbar",style:gc(x.g.id)},el("span",{class:"lbl"},x.g.name),el("div",{class:"track"},el("div",{class:"fill",style:`width:${x.avg/5*100}%`})),el("span",{class:"val"},x.avg.toFixed(1).replace(".",",")+" ★"))):[el("p",{class:"empty"},"Hier erscheint, welche Musik eure Klasse am liebsten mag.")]));
 }
-function hl(e,n){const btns=e.currentTarget.parentElement.querySelectorAll("button");btns.forEach((b,i)=>b.classList.toggle("hl",i<n))}
+const canHover=window.matchMedia&&matchMedia("(hover:hover)").matches;
+function hl(e,n){const p=e.currentTarget&&e.currentTarget.parentElement;if(!p)return;const btns=p.querySelectorAll("button");btns.forEach((b,i)=>b.classList.toggle("hl",i<n))}
 async function vote(s,n){
   justRated[s.id]=n;tone(true);addPoints(2);
   const v={song:s.id,g:s.g,stars:n,at:Date.now()};
