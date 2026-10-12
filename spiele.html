@@ -403,7 +403,7 @@ function startHoeren(){
     const a=list[i];let done=false;
     const frame=el("div",{class:"frame"},el("button",{class:"btn",style:"position:absolute;inset:0;margin:auto;width:max-content;height:max-content;z-index:2",onclick:e=>{
       frame.replaceChildren(
-        el("iframe",{src:`https://www.youtube-nocookie.com/embed/${a.yt}?autoplay=1&rel=0&controls=1&modestbranding=1&start=8`,title:"Hör-Rätsel",allow:"autoplay; encrypted-media"}),
+        el("iframe",{src:`https://www.youtube-nocookie.com/embed/${a.yt}?autoplay=1&rel=0&controls=1&modestbranding=1&start=8`,title:"Hör-Rätsel",allow:"autoplay; encrypted-media",referrerpolicy:"strict-origin-when-cross-origin"}),
         el("div",{class:"cover",id:"cover"},el("span",{},"♪ Hör gut zu …",el("br"),el("small",{style:"font-family:var(--f-body);font-size:.8rem;opacity:.85"},"Nichts zu hören? Tippe einmal auf dieses Feld."))));
     }},"▶ Lied abspielen"));
     const fb=el("div",{});

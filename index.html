@@ -63,7 +63,28 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--owl);outline-offset
 
 .intro{color:var(--muted);max-width:65ch;margin:4px 0 18px}
 
-/* Hörstation */
+/* Hörstation: Karteikarten */
+.flip{perspective:1200px;cursor:pointer;min-width:0;-webkit-tap-highlight-color:transparent}
+.flip:focus-visible{outline:3px solid var(--owl);outline-offset:3px;border-radius:20px}
+.flip-inner{display:grid;transition:transform .55s ease;transform-style:preserve-3d;-webkit-transform-style:preserve-3d}
+.flip.open .flip-inner{transform:rotateY(180deg)}
+.face{grid-area:1/1;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:20px;padding:18px;min-height:230px;display:flex;flex-direction:column;gap:8px}
+.face h3{font-size:2rem}
+.front{background:var(--gc);color:var(--surface);align-items:center;justify-content:center;text-align:center}
+.front h3{margin-top:auto}
+.front .fanimal{font-size:1.05rem;font-weight:700}
+.turn{margin-top:auto;font-size:.8rem;opacity:.85}
+.back{background:var(--surface);border:3px solid var(--gc);transform:rotateY(180deg)}
+.back h3{color:var(--gc);font-size:1.5rem}
+.back ul{margin:0;padding-left:20px;font-size:.98rem;display:flex;flex-direction:column;gap:4px}
+.back .turn{color:var(--muted)}
+.small{font-size:.9rem;padding:8px 14px;border-radius:12px}
+/* Tonspur */
+.tonspur{display:flex;flex-direction:column;align-items:center;gap:8px}
+.tonspur-label{font-family:var(--f-display);font-size:1.15rem;color:var(--night)}
+.tonspur-frame{width:min(360px,100%);max-width:100%;height:200px;border-radius:14px;overflow:hidden;background:var(--surface-2)}
+.tonspur-frame iframe{width:100%;height:100%;border:0;display:block}
+.tonspur a{font-size:.85rem;color:var(--muted)}
 .genres{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .gcard{background:var(--surface);border-radius:18px;border:2px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
 .gcard header{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
@@ -179,14 +200,15 @@ details.merk ul{margin:8px 0 0;padding-left:20px;font-size:.95rem}
   </div>
 
   <div class="tabs" role="tablist">
-    <button class="tab" role="tab" id="t-hoeren" aria-selected="true" data-view="hoeren">Hörstation<span>Lieder &amp; Merkmale</span></button>
+    <button class="tab" role="tab" id="t-hoeren" aria-selected="true" data-view="hoeren">Hörstation<span>Merkmal-Karten</span></button>
     <button class="tab" role="tab" id="t-sort" aria-selected="false" data-view="sort">Merkmal-Spiel<span>Sortieren</span></button>
     <button class="tab" role="tab" id="t-detektiv" aria-selected="false" data-view="detektiv">Lied-Detektiv<span>Zuordnen</span></button>
     <button class="tab" role="tab" id="t-bewerten" aria-selected="false" data-view="bewerten">Bewerten<span>Klassen-Hitparade</span></button>
   </div>
 
   <section id="v-hoeren">
-    <p class="intro">Eule hat auf ihrer Reise acht Tiere getroffen. Jedes Tier liebt eine andere Musik. Hör dir die Lieder noch einmal an und lies die Merkmale. Tippe auf ein Lied, dann spielt es.</p>
+    <p class="intro">Eule hat auf ihrer Reise acht Tiere getroffen. Jedes Tier liebt eine andere Musik. Was weißt du noch über die Musik? Überlege zuerst, dann tippe auf die Karte. Sie dreht sich um und zeigt die Merkmale.</p>
+    <div class="row" style="justify-content:flex-start;margin-bottom:14px"><button class="btn ghost small" id="flipAll">Alle Karten umdrehen</button></div>
     <div class="genres" id="genres"></div>
   </section>
 
@@ -196,7 +218,7 @@ details.merk ul{margin:8px 0 0;padding-left:20px;font-size:.95rem}
   </section>
 
   <section id="v-detektiv" hidden>
-    <p class="intro">Diese Lieder kommen nicht aus dem Hörspiel. Hör sie dir an und finde heraus, zu welcher Musikrichtung sie gehören. Achte auf Instrumente, Tempo und Gesang.</p>
+    <p class="intro">Diese Lieder kommen nicht aus dem Hörspiel. Hör dir die Tonspur an und finde heraus, zu welcher Musikrichtung das Lied gehört. Achte auf Instrumente, Tempo und Gesang.</p>
     <div class="stage" id="detStage"></div>
   </section>
 
@@ -213,7 +235,7 @@ details.merk ul{margin:8px 0 0;padding-left:20px;font-size:.95rem}
   <details class="teacher">
     <summary>Für Lehrkräfte</summary>
     <ul>
-      <li>Die Lieder spielen in einem Fenster direkt auf der Seite (YouTube, datenschutzfreundlicher Modus). Falls ein Video dort nicht abspielbar ist, gibt es einen Link zu YouTube. Das Hörspiel-Material stammt aus „Eule findet den Beat“ (Simon, Addin, Anders); die Merkmale sind kindgerecht vereinfacht.</li>
+      <li>Die Hörstation zeigt nur die Merkmale als Karteikarten, ohne Musik. Im Lied-Detektiv und beim Bewerten laufen reine Tonspuren (YouTube-Audiospuren mit Standbild, datenschutzfreundlicher Modus). Falls eine Tonspur im Schulnetz nicht abspielbar ist, gibt es einen Link zu YouTube. Das Hörspiel-Material stammt aus „Eule findet den Beat“ (Simon, Addin, Anders); die Merkmale sind kindgerecht vereinfacht.</li>
       <li>Merkmal-Spiel: 12 Karten pro Runde, zufällig aus 42 Merkmalen. Lied-Detektiv: 8 Lieder, ähnlich zu den Hörspiel-Songs.</li>
       <li>Die Bewertungen werden im Browser des jeweiligen Geräts gespeichert. Für ein gemeinsames Klassenergebnis bewerten die Kinder nacheinander an einem Gerät, z. B. am Whiteboard.</li>
       <li>Punkte und Federn gelten nur für die aktuelle Sitzung auf dem jeweiligen Gerät.</li>
@@ -257,14 +279,14 @@ const GENRES=[
   eule:{t:"Elektro-Song",yt:"zcUQNmrsE4U"}, tip:"Computer-Klänge und ein Beat, der nicht aufhört."}
 ];
 const SIMILAR=[
- {id:"s-pop",g:"pop",t:"Happy",a:"Pharrell Williams",yt:"ZbZSe6N_BXs"},
- {id:"s-jazz",g:"jazz",t:"When the Saints Go Marching In",a:"Louis Armstrong",yt:"2eUzdTF3P2M"},
- {id:"s-rock",g:"rock",t:"We Will Rock You",a:"Queen",yt:"-tJYN-eG1zk"},
- {id:"s-oper",g:"oper",t:"Der Vogelfänger bin ich ja (Zauberflöte)",a:"W. A. Mozart",yt:"XvUU6TSLJlA"},
- {id:"s-punk",g:"punk",t:"Should I Stay or Should I Go",a:"The Clash",yt:"xMaE6toi4mk"},
- {id:"s-reggae",g:"reggae",t:"Three Little Birds",a:"Bob Marley & The Wailers",yt:"HNBCVM4KbUM"},
- {id:"s-hiphop",g:"hiphop",t:"Wieder Deine Freunde",a:"Deine Freunde",yt:"XRZ7NIsukJU"},
- {id:"s-elektro",g:"elektro",t:"One More Time",a:"Daft Punk",yt:"FGBhQbmPwH8"}
+ {id:"s-pop",g:"pop",t:"Happy",a:"Pharrell Williams",yt:"TO7nGauKvRE"},
+ {id:"s-jazz",g:"jazz",t:"When the Saints Go Marching In",a:"Louis Armstrong",yt:"USpYJB6rdRs"},
+ {id:"s-rock",g:"rock",t:"We Will Rock You",a:"Queen",yt:"zFt-FSEJ5oE"},
+ {id:"s-oper",g:"oper",t:"Der Vogelfänger bin ich ja (Zauberflöte)",a:"W. A. Mozart (gesungen von Bryn Terfel)",yt:"-NNI2AUImUw"},
+ {id:"s-punk",g:"punk",t:"Should I Stay or Should I Go",a:"The Clash",yt:"wjZMcWaniA4"},
+ {id:"s-reggae",g:"reggae",t:"Three Little Birds",a:"Bob Marley & The Wailers",yt:"MUNNRAdizz0"},
+ {id:"s-hiphop",g:"hiphop",t:"Wieder Deine Freunde",a:"Deine Freunde",yt:"eWuCEl7lvv8"},
+ {id:"s-elektro",g:"elektro",t:"One More Time",a:"Daft Punk",yt:"WYhv-hR6Q2U"}
 ];
 const G=Object.fromEntries(GENRES.map(g=>[g.id,g]));
 const yt=id=>"https://www.youtube.com/watch?v="+id;
@@ -291,23 +313,19 @@ function tone(ok){try{actx=actx||new (window.AudioContext||window.webkitAudioCon
 document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===b));
   ["hoeren","sort","detektiv","bewerten"].forEach(v=>$("#v-"+v).hidden=v!==b.dataset.view);
+  if(b.dataset.view!=="detektiv"&&det&&det.i<det.songs.length)drawDet();
 }));
 
-/* Hörstation */
-function listenLink(song,extraClass="listen"){
-  return el("a",{class:extraClass,href:yt(song.yt),target:"_blank",rel:"noopener","data-yt":song.yt,"data-title":song.t},el("span",{class:"play"}),el("span",{},el("b",{},song.t),el("i",{},song.a+" · YouTube")));
-}
+/* Hörstation: Karteikarten */
+function flipCard(c){const open=!c.classList.contains("open");c.classList.toggle("open",open);c.setAttribute("aria-pressed",String(open))}
 $("#genres").replaceChildren(...GENRES.map(g=>{
-  const sim=SIMILAR.find(s=>s.g===g.id);
-  return el("article",{class:"gcard",style:gc(g.id)},
-    el("header",{},el("h3",{},g.name),el("span",{class:"animal"},"Tier: "+g.animal)),
-    el("span",{},el("span",{class:"chip"},"Aus dem Hörspiel")),
-    listenLink({t:g.eule.t,a:"Eule findet den Beat",yt:g.eule.yt}),
-    el("span",{},el("span",{class:"chip"},"Klingt ähnlich")),
-    listenLink(sim),
-    el("details",{class:"merk"},el("summary",{},"Merkmale anzeigen"),el("ul",{},g.merk.map(m=>el("li",{},m))))
-  );
+  const c=el("div",{class:"flip",role:"button",tabindex:"0","aria-pressed":"false","aria-label":g.name+": Karte umdrehen",style:gc(g.id),onclick:e=>flipCard(e.currentTarget),onkeydown:e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();flipCard(e.currentTarget)}}},
+    el("div",{class:"flip-inner"},
+      el("div",{class:"face front"},el("h3",{},g.name),el("span",{class:"fanimal"},"Tier: "+g.animal),el("span",{class:"turn"},"Tippe zum Umdrehen ↻")),
+      el("div",{class:"face back"},el("h3",{},g.name),el("ul",{},g.merk.map(m=>el("li",{},m))),el("span",{class:"turn"},"Tippe zum Zurückdrehen ↻"))));
+  return c;
 }));
+$("#flipAll").addEventListener("click",()=>{const cards=[...document.querySelectorAll(".flip")];const open=!cards.every(c=>c.classList.contains("open"));cards.forEach(c=>{c.classList.toggle("open",open);c.setAttribute("aria-pressed",String(open))});$("#flipAll").textContent=open?"Alle Karten zudecken":"Alle Karten umdrehen"});
 
 /* Merkmal-Spiel */
 const ROUND=12;
@@ -388,7 +406,9 @@ function drawDet(){
   st.replaceChildren(
     el("div",{class:"progress"},el("span",{},`Lied ${r.i+1} von ${r.songs.length}`),el("div",{class:"bar"},el("i",{style:`width:${r.i/r.songs.length*100}%`})),el("span",{},"")),
     el("div",{class:"card pop"},el("div",{},s.t,el("span",{class:"sub"},s.a))),
-    el("div",{class:"row"},el("a",{class:"big-listen",href:yt(s.yt),target:"_blank",rel:"noopener","data-yt":s.yt,"data-title":s.t},el("span",{class:"play"}),"Lied anhören")),
+    el("div",{class:"tonspur"},el("span",{class:"tonspur-label"},"Tonspur: Tippe auf ▶ und hör genau hin"),
+      el("div",{class:"tonspur-frame"},el("iframe",{src:`https://www.youtube-nocookie.com/embed/${s.yt}?rel=0&playsinline=1&modestbranding=1`,title:"Tonspur: "+s.t,allow:"encrypted-media; picture-in-picture",loading:"lazy",referrerpolicy:"strict-origin-when-cross-origin"})),
+      el("a",{href:yt(s.yt),target:"_blank",rel:"noopener"},"Lässt sich nicht abspielen? Hier auf YouTube öffnen")),
     el("p",{style:"margin:0;text-align:center;color:var(--muted)"},"Zu welcher Musikrichtung gehört das Lied?"),
     choices,fb,el("div",{class:"row"},next));
 }
@@ -446,7 +466,7 @@ resetBtn.addEventListener("click",()=>{
 function openPlayer(id,title){
   $("#playerTitle").textContent=title||"Lied";
   $("#playerLink").href=yt(id);
-  $("#frame").replaceChildren(el("iframe",{src:"https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&rel=0",title:title||"Lied",allow:"autoplay; encrypted-media; picture-in-picture",allowfullscreen:true}));
+  $("#frame").replaceChildren(el("iframe",{src:"https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&rel=0",title:title||"Lied",allow:"autoplay; encrypted-media; picture-in-picture",allowfullscreen:true,referrerpolicy:"strict-origin-when-cross-origin"}));
   $("#player").hidden=false;$("#playerClose").focus();
 }
 function closePlayer(){$("#frame").replaceChildren();$("#player").hidden=true}
